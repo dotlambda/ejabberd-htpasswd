@@ -73,10 +73,7 @@ class Engine(object):
     cmd     = params[0]
     if cmd == 'auth':
       user, domain, cred = params[1:4]
-      if domain and self.domainsed:
-        domain = self.domainsed[0].sub(self.domainsed[1], domain)
-      if domain:
-        user = user + '@' + domain
+      user = self._transformUser(user, domain)
       log.debug('authenticating %r', user)
       if not self.htpasswd.check(user, cred):
         log.warning('authentication for %r failed (bad username/password)', user)
@@ -84,12 +81,23 @@ class Engine(object):
         return 0
       log.info('authentication for %r succeeded', user)
       return 1
-
     if cmd == 'isuser':
-      pass
-
-    log.error('unknown command: %r', request)
+      user, domain = params[1:3]
+      user = self._transformUser(user, domain)
+      log.debug('checking for existence of %r', user)
+      if not self.htpasswd.isUser(user):
+        return 0
+      return 1
+    log.error('unknown/unimplemented command: %r', request)
     return 0
+
+  #----------------------------------------------------------------------------
+  def _transformUser(self, user, domain):
+    if domain and self.domainsed:
+      domain = self.domainsed[0].sub(self.domainsed[1], domain)
+    if domain:
+      return user + '@' + domain
+    return user
 
   #----------------------------------------------------------------------------
   def read(self):
