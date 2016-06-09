@@ -77,8 +77,7 @@ parameters:
 
   .. code:: erlang
 
-    %% line-breaks added for clarity!
     {extauth_program,
-      "/usr/local/bin/ejabberd-htpasswd
-        -t /.*\\\\.example\\\\.com$/example.com/
+      "/usr/local/bin/ejabberd-htpasswd \\
+        -t /.*\\\\.example\\\\.com$/example.com/ \\
         /path/to/htpasswd"}.
