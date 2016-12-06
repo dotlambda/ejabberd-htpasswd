@@ -3,6 +3,12 @@ ChangeLog
 =========
 
 
+v0.1.3
+======
+
+* Added support for human-friendly mode ("--human")
+
+
 v0.1.2
 ======
 
