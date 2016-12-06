@@ -23,6 +23,7 @@ import logging
 import logging.handlers
 import argparse
 import time
+import sys
 
 from .i18n import _
 from . import engine
@@ -93,11 +94,14 @@ def main(argv=None):
   root = logging.getLogger()
   for handler in root.handlers:
     root.removeHandler(handler)
-  handler = logging.handlers.RotatingFileHandler(
-    options.logfile,
-    maxBytes    = options.logsize,
-    backupCount = options.logcount,
-  )
+  if options.human:
+    handler = logging.StreamHandler(sys.stderr)
+  else:
+    handler = logging.handlers.RotatingFileHandler(
+      options.logfile,
+      maxBytes    = options.logsize,
+      backupCount = options.logcount,
+    )
   handler.setFormatter(logging.Formatter(
     fmt       = '[%(asctime)s] %(levelname)-5.5s [%(name)s,pid=%(process)d] %(message)s',
     datefmt   = '%Y-%m-%dT%H:%M:%SZ',
@@ -110,7 +114,13 @@ def main(argv=None):
     proc = engine.Engine(options)
   except Exception:
     root.exception('failed starting ejabberd-htpasswd engine')
-  proc.run()
+    return 20
+
+  try:
+    proc.run()
+  except KeyboardInterrupt:
+    root.info('exit requested via ^C')
+    return 0
 
 #------------------------------------------------------------------------------
 # end of $Id$
