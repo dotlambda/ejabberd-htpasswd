@@ -73,6 +73,11 @@ def main(argv=None):
            ' "-t /chat\\.example\\.com/example\\.com/"'))
 
   cli.add_argument(
+    _('-f'), _('--human'),
+    dest='human', action='store_true', default=False,
+    help=_('human-friendly mode (i.e. "wtf is going on" mode)'))
+
+  cli.add_argument(
     'htpasswd', metavar=_('FILENAME'),
     nargs='?', default=DEFAULT_HTPASSWD,
     help=_('path to apache-style ".htpasswd" file; default: "%(default)s"'))

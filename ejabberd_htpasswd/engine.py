@@ -65,6 +65,8 @@ class Engine(object):
       result  = self.processRequest(request)
       log.debug('response: %r', result)
       self.write(result)
+      if self.options.human:
+        return
 
   #----------------------------------------------------------------------------
   def processRequest(self, request):
@@ -101,12 +103,18 @@ class Engine(object):
 
   #----------------------------------------------------------------------------
   def read(self):
+    if self.options.human:
+      return sys.stdin.read()
     input_length = sys.stdin.read(2)
     (size,) = struct.unpack('>h', input_length)
     return sys.stdin.read(size)
 
   #----------------------------------------------------------------------------
   def write(self, result):
+    if self.options.human:
+      sys.stdout.write(str(result))
+      sys.stdout.flush()
+      return
     token = struct.pack('>hh', 2, result)
     sys.stdout.write(token)
     sys.stdout.flush()
