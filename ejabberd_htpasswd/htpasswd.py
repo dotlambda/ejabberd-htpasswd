@@ -20,6 +20,7 @@
 #------------------------------------------------------------------------------
 
 import bcrypt
+import crypt
 import logging
 
 # TODO: cache the htpasswd file... **BUT** only do that if there is
@@ -58,6 +59,9 @@ class Htpasswd(object):
       return False
     if check.startswith('$2a$') or check.startswith('$2y$'):
       return check == bcrypt.hashpw(credential, check)
+    elif check.startswith('$1') or check.startswith('$2a') \
+        or check.startswith('$5') or check.startswith('$6')
+      return check == crypt.crypt(credential, check)
     log.error('unknown htpasswd hash entry for user %r', username)
     return False
 
